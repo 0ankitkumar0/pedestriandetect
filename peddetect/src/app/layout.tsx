@@ -31,5 +31,5 @@ export default function RootLayout({
       </body>
     </html>
   );
-  console.log("newupdate")
+
 }
