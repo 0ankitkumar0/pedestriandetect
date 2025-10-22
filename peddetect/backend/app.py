@@ -23,7 +23,7 @@ TRACK_DISTANCE_THRESHOLD = 80.0
 TRACK_MAX_MISSES = 10
 SLOW_SPEED_THRESHOLD = 60.0
 FAST_SPEED_THRESHOLD = 150.0
-
+app = FastAPI()
 DEFAULT_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -37,6 +37,10 @@ def _load_allowed_origins() -> List[str]:
     if not raw:
         return DEFAULT_ALLOWED_ORIGINS
     return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Pedestrian Detection API"}
 
 
 ALLOWED_ORIGINS = _load_allowed_origins()
