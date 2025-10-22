@@ -1,6 +1,7 @@
 """FastAPI application for HOG-based pedestrian detection."""
 from __future__ import annotations
 
+import os
 import shutil
 from pathlib import Path
 from typing import Any, Dict, List
@@ -23,6 +24,23 @@ TRACK_MAX_MISSES = 10
 SLOW_SPEED_THRESHOLD = 60.0
 FAST_SPEED_THRESHOLD = 150.0
 
+DEFAULT_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+]
+
+
+def _load_allowed_origins() -> List[str]:
+    raw = os.getenv("ALLOWED_ORIGINS")
+    if not raw:
+        return DEFAULT_ALLOWED_ORIGINS
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
+
+ALLOWED_ORIGINS = _load_allowed_origins()
+
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -30,12 +48,7 @@ app = FastAPI(title="Pedestrian Detection Service", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
